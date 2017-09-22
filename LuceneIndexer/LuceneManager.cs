@@ -1,6 +1,8 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.QueryParsers;
+using Lucene.Net.Search;
 using Lucene.Net.Store;
 using System.Collections.Generic;
 using static Lucene.Net.Index.IndexWriter;
@@ -30,6 +32,15 @@ namespace LuceneIndexer
             document.Add(new Field("Text", record[1], Field.Store.YES, Field.Index.ANALYZED));
             _indexWriter.AddDocument(document);
             _indexWriter.Optimize();
+        }
+
+        public TopDocs Search(string searchString)
+        {
+            IndexSearcher indexSearcher = new IndexSearcher(_directory);
+            QueryParser parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "Parser", _analyzer);
+            Query query = parser.Parse(searchString);
+            TopDocs results = indexSearcher.Search(query, 100);
+            return results;
         }
 
         public void Destroy()
