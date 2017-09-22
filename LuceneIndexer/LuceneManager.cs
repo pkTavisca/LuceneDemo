@@ -25,7 +25,17 @@ namespace LuceneIndexer
 
         public void Index(List<string> record)
         {
+            Document document = new Document();
+            document.Add(new Field("Id", record[0], Field.Store.YES, Field.Index.NOT_ANALYZED));
+            document.Add(new Field("Text", record[1], Field.Store.YES, Field.Index.ANALYZED));
+            _indexWriter.AddDocument(document);
+            _indexWriter.Optimize();
+        }
 
+        public void Destroy()
+        {
+            _indexWriter.Dispose();
+            _directory.Dispose();
         }
     }
 }
